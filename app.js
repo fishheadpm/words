@@ -2,6 +2,9 @@
 
 const DATA_URL = './data.json';
 
+const MODE_INPUT = 'input';
+const MODE_SELFCHECK = 'selfcheck';
+
 const seriesScreen = document.getElementById('seriesScreen');
 const titleScreen = document.getElementById('titleScreen');
 const quizScreen = document.getElementById('quizScreen');
@@ -12,17 +15,22 @@ const seriesButtonGroup = document.getElementById('seriesButtonGroup');
 const titleRoundName = document.getElementById('titleRoundName');
 const historyTitle = document.getElementById('historyTitle');
 
-const startFromBeginningButton = document.getElementById('startFromBeginningButton');
-const continueButton = document.getElementById('continueButton');
+const startInputModeButton = document.getElementById('startInputModeButton');
+const continueInputModeButton = document.getElementById('continueInputModeButton');
+const startSelfCheckModeButton = document.getElementById('startSelfCheckModeButton');
+const continueSelfCheckModeButton = document.getElementById('continueSelfCheckModeButton');
 const historyButton = document.getElementById('historyButton');
 const resetRoundButton = document.getElementById('resetRoundButton');
 const backToSeriesButton = document.getElementById('backToSeriesButton');
 
 const progressLabel = document.getElementById('progressLabel');
 const roundLabel = document.getElementById('roundLabel');
+const modeLabel = document.getElementById('modeLabel');
 const questionText = document.getElementById('questionText');
 
+const inputArea = document.getElementById('inputArea');
 const answerInput = document.getElementById('answerInput');
+const yourAnswerBlock = document.getElementById('yourAnswerBlock');
 const yourAnswer = document.getElementById('yourAnswer');
 
 const beforeRevealArea = document.getElementById('beforeRevealArea');
@@ -43,9 +51,10 @@ const historyList = document.getElementById('historyList');
 let allRounds = [];
 let selectedRound = null;
 let currentProgress = null;
+let currentMode = MODE_INPUT;
 
-function getProgressStorageKey(roundId) {
-  return `english_word_progress_${roundId}`;
+function getProgressStorageKey(roundId, mode) {
+  return `english_word_progress_${roundId}_${mode}`;
 }
 
 function getHistoryStorageKey(roundId) {
@@ -125,7 +134,7 @@ function loadProgress() {
     return null;
   }
 
-  const raw = localStorage.getItem(getProgressStorageKey(selectedRound.id));
+  const raw = localStorage.getItem(getProgressStorageKey(selectedRound.id, currentMode));
   if (!raw) {
     return null;
   }
@@ -142,14 +151,14 @@ function saveProgress(progress) {
   if (!selectedRound) {
     return;
   }
-  localStorage.setItem(getProgressStorageKey(selectedRound.id), JSON.stringify(progress));
+  localStorage.setItem(getProgressStorageKey(selectedRound.id, currentMode), JSON.stringify(progress));
 }
 
-function clearProgress() {
+function clearProgressByMode(mode) {
   if (!selectedRound) {
     return;
   }
-  localStorage.removeItem(getProgressStorageKey(selectedRound.id));
+  localStorage.removeItem(getProgressStorageKey(selectedRound.id, mode));
 }
 
 function clearHistory() {
@@ -160,7 +169,8 @@ function clearHistory() {
 }
 
 function resetSelectedRoundData() {
-  clearProgress();
+  clearProgressByMode(MODE_INPUT);
+  clearProgressByMode(MODE_SELFCHECK);
   clearHistory();
   currentProgress = null;
 }
@@ -193,11 +203,15 @@ function getCurrentQuestion() {
   return getQuestionById(currentProgress.queue[0]);
 }
 
+function getModeLabelText() {
+  return currentMode === MODE_INPUT ? '入力ありモード' : '自己申告モード';
+}
+
 function renderCurrentQuestion() {
   const currentQuestion = getCurrentQuestion();
 
   if (!currentQuestion) {
-    clearProgress();
+    clearProgressByMode(currentMode);
     currentProgress = null;
     showCompleteScreen();
     return;
@@ -208,25 +222,39 @@ function renderCurrentQuestion() {
 
   progressLabel.textContent = `進行状況: ${solvedCount} / ${totalCount}`;
   roundLabel.textContent = selectedRound ? selectedRound.name : '';
+  modeLabel.textContent = getModeLabelText();
   questionText.textContent = currentQuestion.japanese;
   answerInput.value = '';
   yourAnswer.textContent = '';
   answerTerm.textContent = '';
 
+  if (currentMode === MODE_INPUT) {
+    inputArea.classList.remove('hidden');
+    yourAnswerBlock.classList.remove('hidden');
+  } else {
+    inputArea.classList.add('hidden');
+    yourAnswerBlock.classList.add('hidden');
+  }
+
   beforeRevealArea.classList.remove('hidden');
   answerArea.classList.add('hidden');
 
   showQuizScreen();
-  setTimeout(() => answerInput.focus(), 0);
+
+  if (currentMode === MODE_INPUT) {
+    setTimeout(() => answerInput.focus(), 0);
+  }
 }
 
-function startFromBeginning() {
+function startFromBeginning(mode) {
+  currentMode = mode;
   currentProgress = createNewProgress();
   saveProgress(currentProgress);
   renderCurrentQuestion();
 }
 
-function continueFromSaved() {
+function continueFromSaved(mode) {
+  currentMode = mode;
   const saved = loadProgress();
 
   if (!saved || !Array.isArray(saved.queue) || !Array.isArray(saved.solvedIds) || saved.queue.length === 0) {
@@ -244,7 +272,10 @@ function showAnswer() {
     return;
   }
 
-  yourAnswer.textContent = answerInput.value.trim() || '（未入力）';
+  if (currentMode === MODE_INPUT) {
+    yourAnswer.textContent = answerInput.value.trim() || '（未入力）';
+  }
+
   answerTerm.textContent = currentQuestion.english;
 
   beforeRevealArea.classList.add('hidden');
@@ -368,8 +399,10 @@ async function loadRounds() {
   allRounds = data;
 }
 
-startFromBeginningButton.addEventListener('click', startFromBeginning);
-continueButton.addEventListener('click', continueFromSaved);
+startInputModeButton.addEventListener('click', () => startFromBeginning(MODE_INPUT));
+continueInputModeButton.addEventListener('click', () => continueFromSaved(MODE_INPUT));
+startSelfCheckModeButton.addEventListener('click', () => startFromBeginning(MODE_SELFCHECK));
+continueSelfCheckModeButton.addEventListener('click', () => continueFromSaved(MODE_SELFCHECK));
 
 historyButton.addEventListener('click', () => {
   renderHistory();
