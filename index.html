@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英単語アプリ</title>
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <div class="container">
+    <header class="card">
+      <h1>英単語アプリ</h1>
+      <p class="sub">日本語を見て英語を答える学習アプリ</p>
+    </header>
+
+    <main>
+      <section id="seriesScreen" class="card">
+        <h2>回を選ぶ</h2>
+        <div id="seriesButtonGroup" class="button-group vertical"></div>
+      </section>
+
+      <section id="titleScreen" class="card hidden">
+        <h2 id="titleRoundName">タイトル</h2>
+        <div class="button-group vertical">
+          <button id="startFromBeginningButton">最初から</button>
+          <button id="continueButton">続きから</button>
+          <button id="historyButton">間違えた履歴</button>
+          <button id="resetRoundButton" class="danger">この回の履歴をリセットする</button>
+          <button id="backToSeriesButton" class="secondary">回選択に戻る</button>
+        </div>
+      </section>
+
+      <section id="quizScreen" class="card hidden">
+        <div class="quiz-top">
+          <p id="progressLabel" class="progress-label"></p>
+          <p id="roundLabel" class="round-label"></p>
+        </div>
+
+        <div class="question-area">
+          <div>
+            <div class="question-label">次の日本語に対応する英語は？</div>
+            <div id="questionText" class="question-text"></div>
+          </div>
+        </div>
+
+        <div id="inputArea" class="answer-input-area">
+          <label for="answerInput">自分の答えを入力</label>
+          <input type="text" id="answerInput" autocomplete="off" spellcheck="false">
+        </div>
+
+        <div id="beforeRevealArea" class="button-group vertical">
+          <button id="showAnswerButton">正解を表示</button>
+          <button id="backToTitleFromQuizButton" class="secondary">タイトルに戻る</button>
+        </div>
+
+        <div id="answerArea" class="answer-area hidden">
+          <div class="answer-box">
+            <p class="answer-title">あなたの入力</p>
+            <p id="yourAnswer" class="your-answer"></p>
+
+            <p class="answer-title answer-gap">正解</p>
+            <p id="answerTerm" class="answer-term"></p>
+          </div>
+
+          <div class="button-group vertical">
+            <button id="correctButton">正解した</button>
+            <button id="wrongButton" class="danger">間違えた</button>
+            <button id="backToTitleAfterRevealButton" class="secondary">タイトルに戻る</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="completeScreen" class="card hidden">
+        <h2>全部正解しました</h2>
+        <p>今回の出題をすべて終えました。</p>
+        <div class="button-group vertical">
+          <button id="backToTitleFromCompleteButton">タイトルに戻る</button>
+        </div>
+      </section>
+
+      <section id="historyScreen" class="card hidden">
+        <h2 id="historyTitle">間違えた履歴</h2>
+        <div id="historyList" class="history-list"></div>
+
+        <div class="button-group vertical">
+          <button id="backToTitleFromHistoryButton">タイトルに戻る</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js?v=1"></script>
+</body>
+</html>
