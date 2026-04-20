@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>英単語アプリ</title>
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <div class="container">
@@ -22,8 +22,10 @@
       <section id="titleScreen" class="card hidden">
         <h2 id="titleRoundName">タイトル</h2>
         <div class="button-group vertical">
-          <button id="startFromBeginningButton">最初から</button>
-          <button id="continueButton">続きから</button>
+          <button id="startInputModeButton">最初から（入力あり）</button>
+          <button id="continueInputModeButton">続きから（入力あり）</button>
+          <button id="startSelfCheckModeButton">最初から（自己申告）</button>
+          <button id="continueSelfCheckModeButton">続きから（自己申告）</button>
           <button id="historyButton">間違えた履歴</button>
           <button id="resetRoundButton" class="danger">この回の履歴をリセットする</button>
           <button id="backToSeriesButton" class="secondary">回選択に戻る</button>
@@ -34,6 +36,7 @@
         <div class="quiz-top">
           <p id="progressLabel" class="progress-label"></p>
           <p id="roundLabel" class="round-label"></p>
+          <p id="modeLabel" class="round-label"></p>
         </div>
 
         <div class="question-area">
@@ -55,8 +58,10 @@
 
         <div id="answerArea" class="answer-area hidden">
           <div class="answer-box">
-            <p class="answer-title">あなたの入力</p>
-            <p id="yourAnswer" class="your-answer"></p>
+            <div id="yourAnswerBlock">
+              <p class="answer-title">あなたの入力</p>
+              <p id="yourAnswer" class="your-answer"></p>
+            </div>
 
             <p class="answer-title answer-gap">正解</p>
             <p id="answerTerm" class="answer-term"></p>
@@ -89,6 +94,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=1"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
