@@ -1,6 +1,5 @@
 [
   {
-      {
     "id": "round1",
     "name": "第1回",
     "questions": [
@@ -51,6 +50,7 @@
       { "id": "r1q045", "english": "health", "japanese": "健康" }
     ]
   },
+  {
     "id": "round2",
     "name": "第2回",
     "questions": [
